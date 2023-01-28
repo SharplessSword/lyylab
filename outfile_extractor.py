@@ -24,16 +24,15 @@ def extract_class(reaction):
     print(reaction)
     reactant_title = reaction[0]
     temperature = [item[0] for item in reaction[2:]]
+    column_name = reaction[1][1:-2]
     print(len(reaction))
     brach_data_dict = {}
     for i in range(1, len(reaction[1])-2):
         brach_data_dict[reaction[1][i]] = [ item[i] for item in reaction[2:]]
-
-
     loss = [float(item[-2]) for item in reaction[2:]]
     capture = [float(item[-1]) for item in reaction[2:]]
-
-    #return Reaction(reactant_title, temperature, reactant_data_dict, loss)
+    branch_ratio_dict = calculate_branch_ratio(brach_data_dict, loss)
+    return Reaction(reactant_title, temperature, column_name, brach_data_dict, loss, capture, branch_ratio_dict)
 
 
 def clean_data(data):
@@ -60,34 +59,15 @@ def clean_data(data):
     return result_list
 
 
-def calculate(result):
-    calculated_result =[]
-    for block in result:
-        calculated_result.append([])
-        for i, line in enumerate(block):
-            if i == 0 :
-                calculated_result[-1].append(line)
-            elif i == 1:
-                line_list = []
-                line_list.append(line[0])
-                for column_name in line[1:-2]:
-                    line_list.append(column_name)
-                    line_list.append('分支比')
-                line_list += line[-2:]
-                calculated_result[-1].append(line_list)
-            else:
-                line_list = []
-                line_list.append(line[0])
-                for column_value in line[1:-2]:
-                    column_value = float(column_value)
-                    line_list.append(column_value)
-                    line_list.append(column_value/float(line[-2]))
-                line_list += line[-2:]
-                calculated_result[-1].append(line_list)
-    return calculated_result
+def calculate_branch_ratio(branch_data_dict, loss):
+    branch_ration_dict = {}
+    for key, value in branch_data_dict.items():
+        ration_list = [float(value[i])/loss[i] for i in range(len(value))]
+        branch_ration_dict[key] = ration_list
+    return branch_ration_dict
 
 
 
 data = extract_useful_part('0.01atm-1C5-.out')
 data = clean_data(data)
-extract_class(data[0])
+r = extract_class(data[0])
