@@ -21,11 +21,9 @@ def extract_useful_part(file_name):
 
 
 def extract_class(reaction):
-    print(reaction)
     reactant_title = reaction[0]
     temperature = [item[0] for item in reaction[2:]]
     column_name = reaction[1][1:-2]
-    print(len(reaction))
     brach_data_dict = {}
     for i in range(1, len(reaction[1])-2):
         brach_data_dict[reaction[1][i]] = [ item[i] for item in reaction[2:]]
@@ -66,8 +64,8 @@ def calculate_branch_ratio(branch_data_dict, loss):
         branch_ration_dict[key] = ration_list
     return branch_ration_dict
 
-
-
-data = extract_useful_part('0.01atm-1C5-.out')
-data = clean_data(data)
-r = extract_class(data[0])
+def get_reaction():
+    data = extract_useful_part('0.01atm-1C5-.out')
+    data = clean_data(data)
+    r = extract_class(data[0])
+    return r

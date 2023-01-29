@@ -3,21 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>lyy 的实验室</title>
-    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href='../static/base.css'>
 </head>
 <body>
-    <h1 >lyy lab </h1>
+    <h1>lyy's lab </h1>
     <ol>This is the guide book of the lyylab
         <li>click the button</li>
         <li>upload .out file, the webpage show something</li>
         <li>select the item you want to curve fit</li>
     </ol>
     <p> this is the load file button</p>
-    <h2>after this, is the table</h2>
+    <h2>{{ r.reactant_title }} 's</h2>
     <table>
         <tr>
-            <td bgcolor="aqua">1</td>
-            <td>2</td>
+            <td>T(K)</td>
+            {% for name in r.column_name %}
+                <td>{{ name }}</td>
+                <td>分支比</td>>
+            {% endfor %}
+        {% for i in range(len(r.temperature)) %}
+            <td>{{  }}
         </tr>
         <tr>
             <td>3</td>

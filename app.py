@@ -1,12 +1,9 @@
 from flask import Flask, render_template
-# import templates
+from outfile_extractor import get_reaction
 app = Flask(__name__)
 
-
+reaction = get_reaction()
 @app.route('/')
-def hello_world():  # put application's code here
-    return render_template('hello.html')
+def hello_world():
+    return render_template('hello.html', r=get_reaction())
 
-
-if __name__ == '__main__':
-    app.run()
