@@ -12,3 +12,4 @@ def upload_file():
     uploaded_file = request.files['file']
     content = uploaded_file.stream.read().decode('utf-8')
     return render_template('show_file.html', reaction_list=get_reaction(content))
+

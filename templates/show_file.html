@@ -25,14 +25,21 @@
                     <td>{{ name }}</td>
                     <td>分支比</td>
                 {% endfor %}
+                <td>Loss</td>
             </tr>
             {% for i in range(reaction.temperature|length) %}
                 <tr>
                     <td>{{ reaction.temperature[i] }}</td>
                     {% for key in reaction.branch_data_dict %}
-                        <td>{{ reaction.branch_data_dict[key][i] }}</td>
-                        <td>{{ reaction.branch_ratio_dict[key][i] }}</td>
+                        {% if reaction.branch_ratio_dict[key][i] >= 0.1  %}
+                            <td class="important_reaction">{{ reaction.branch_data_dict[key][i] }}</td>
+                            <td class="important_reaction">{{ reaction.branch_ratio_dict[key][i] }}</td>
+                        {% else %}
+                            <td>{{ reaction.branch_data_dict[key][i] }}</td>
+                            <td>{{ reaction.branch_ratio_dict[key][i] }}</td>
+                        {% endif %}
                     {% endfor %}
+                    <td>{{ reaction.loss[i] }}</td>
                 </tr>
             {% endfor %}
         </table>
