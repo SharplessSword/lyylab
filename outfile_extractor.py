@@ -4,19 +4,18 @@ Reaction = namedtuple('Reaction', ['reactant_title', 'temperature', 'column_name
                                    'capture', 'branch_ratio_dict'])
 
 
-def extract_useful_part(file_name):
+def extract_useful_part(content):
     data = []
-    with open('./{}'.format(file_name)) as f:
-        start = False
-        end = False
-        for line in f.readlines():
-            if line.startswith('Temperature-Species Rate Tables:'):
-                start = True
-            if start and line.startswith('Reactant = P1 '):
-                end = True
-                break
-            if start and not end:
-                data.append(line)
+    start = False
+    end = False
+    for line in content.split('\n'):
+        if line.startswith('Temperature-Species Rate Tables:'):
+            start = True
+        if start and line.startswith('Reactant = P1 '):
+            end = True
+            break
+        if start and not end:
+            data.append(line)
     return data
 
 
@@ -61,11 +60,13 @@ def calculate_branch_ratio(branch_data_dict, loss):
     branch_ration_dict = {}
     for key, value in branch_data_dict.items():
         ration_list = [float(value[i])/loss[i] for i in range(len(value))]
+        ration_list = [round(number, 4) for number in ration_list]
         branch_ration_dict[key] = ration_list
     return branch_ration_dict
 
-def get_reaction():
-    data = extract_useful_part('0.01atm-1C5-.out')
+
+def get_reaction(content):
+    data = extract_useful_part(content)
     data = clean_data(data)
-    r = extract_class(data[0])
-    return r
+    reaction_list = [extract_class(reaction) for reaction in data]
+    return reaction_list

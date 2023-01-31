@@ -12,22 +12,18 @@
         <li>upload .out file, the webpage show something</li>
         <li>select the item you want to curve fit</li>
     </ol>
-    <p> this is the load file button</p>
-    <h2>{{ r.reactant_title }} 's</h2>
-    <table>
-        <tr>
-            <td>T(K)</td>
-            {% for name in r.column_name %}
-                <td>{{ name }}</td>
-                <td>分支比</td>>
-            {% endfor %}
-        {% for i in range(len(r.temperature)) %}
-            <td>{{  }}
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>4</td>
-        </tr>
-    </table>
+    <form method="POST" action="" enctype="multipart/form-data">
+      <p><input type="file" name="file"></p>
+      <p><input type="submit" value="Submit"></p>
+    </form>
+
 </body>
+<script>
+    function get_upload_file(){
+        var objFile = document.getElementById('outfile')
+        var file = objFile.files[0]
+        
+    }
+
+</script>>
 </html>
