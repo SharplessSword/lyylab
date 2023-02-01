@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 Reaction = namedtuple('Reaction', ['reactant_title', 'temperature', 'column_name', 'branch_data_dict', 'loss',
-                                   'capture', 'branch_ratio_dict'])
+                                   'capture', 'branch_ratio_dict', 'important_branch_list'])
 
 
 def extract_useful_part(content):
@@ -21,15 +21,17 @@ def extract_useful_part(content):
 
 def extract_class(reaction):
     reactant_title = reaction[0]
-    temperature = [item[0] for item in reaction[2:]]
+    temperature = [int(float(item[0])) for item in reaction[2:]]
     column_name = reaction[1][1:-2]
-    brach_data_dict = {}
+    branch_data_dict = {}
     for i in range(1, len(reaction[1])-2):
-        brach_data_dict[reaction[1][i]] = [ item[i] for item in reaction[2:]]
+        branch_data_dict[reaction[1][i]] = [ float(item[i]) for item in reaction[2:]]
     loss = [float(item[-2]) for item in reaction[2:]]
     capture = [float(item[-1]) for item in reaction[2:]]
-    branch_ratio_dict = calculate_branch_ratio(brach_data_dict, loss)
-    return Reaction(reactant_title, temperature, column_name, brach_data_dict, loss, capture, branch_ratio_dict)
+    branch_ratio_dict = calculate_branch_ratio(branch_data_dict, loss)
+    import_branch = get_important_branch(branch_ratio_dict)
+    return Reaction(reactant_title, temperature, column_name, branch_data_dict, loss, capture, branch_ratio_dict,
+                    import_branch)
 
 
 def clean_data(data):
@@ -65,8 +67,23 @@ def calculate_branch_ratio(branch_data_dict, loss):
     return branch_ration_dict
 
 
+def get_important_branch(branch_ratio_dict):
+    important_branch_list = []
+    for key, value_list in branch_ratio_dict.items():
+        for value in value_list:
+            if value > 0.1:
+                important_branch_list.append(key)
+                break
+
+    return important_branch_list
+
+
 def get_reaction(content):
     data = extract_useful_part(content)
     data = clean_data(data)
     reaction_list = [extract_class(reaction) for reaction in data]
     return reaction_list
+
+with open('0.01atm-1C5-.out', 'r') as f:
+    content = f.read()
+    get_reaction(content)
