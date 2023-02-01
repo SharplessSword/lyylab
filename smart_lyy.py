@@ -1,3 +1,5 @@
+import math
+
 import openpyxl
 import os
 from openpyxl.styles import PatternFill, Border, Side, Alignment, Protection, Font
@@ -15,13 +17,17 @@ def f_model(x, A, n, E):
     return log(A)+n*log(x)-E/(x*1.9872)
 
 
-# print(f_model(x, 25, -1, 10000))
 # popt, pcov = curve_fit(f=f_model, xdata=xdata, ydata=ydata, p0=(3, -2, 1),)
 def fitnlm(xdata, ydata, f_model):
     popt, pcov = curve_fit(f=f_model, xdata=xdata, ydata=ydata, maxfev = 8000)
     return popt
 
-
+def get_fit_curve_ydata(A, n ,Ea, T):
+    # a = math.log(A)-n*math.log(1/T)-Ea/(1.9872*T) # lnk = a
+    # print('a', a)
+    # k = math.e**a
+    k = A*(T**n)*math.exp(-(Ea/8.3145))
+    return k
 def search_out_file():
     file_list = []
     for file in os.listdir():
@@ -180,7 +186,6 @@ def beautify(workbook, block_count, line_cont, column_count):
         for row in range(line_cont-2):
             for column in range(1, column_count+1):
                 if 3<=column<=column_count-2 and column%2 == 1:
-                    print(column_count)
                     selected_cell = ws.cell(i+row, column)
                     if selected_cell.value >0.1:
                         selected_cell.font = highlight_value_font
@@ -265,16 +270,16 @@ def fill_model_xls(model_data_dict):
 
 
 
-file_list = search_out_file()
-for file_name in file_list:
-    print(file_name)
-    data = extract_useful_part(file_name)
-    splited_data = split_data(data)
-    result = get_data(splited_data)
-    result = calculate(result)
-    workbook, block_count, line_count, column_count = fill_xls(result)
-    workbook = beautify(workbook, block_count, line_count, column_count)
-    save_xls(workbook, file_name)
+# file_list = search_out_file()
+# for file_name in file_list:
+#     print(file_name)
+#     data = extract_useful_part(file_name)
+#     splited_data = split_data(data)
+#     result = get_data(splited_data)
+#     result = calculate(result)
+#     workbook, block_count, line_count, column_count = fill_xls(result)
+#     workbook = beautify(workbook, block_count, line_count, column_count)
+#     save_xls(workbook, file_name)
     # model_data_dict = select_model_data(result)
     # model_data_dict = calculate_model_fitnlm(model_data_dict)
     # fill_model_xls(model_data_dict)
