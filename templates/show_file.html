@@ -78,6 +78,23 @@
                   // 使用刚指定的配置项和数据显示图表。
                   myChart.setOption(option);
                 </script>
+            <button id="btn_tx_1" onclick="btn_tx_r()" class="btn btn-primary" style="position: absolute; margin-left: 70%;margin-top: 6%">绘制曲线</button>
+            <table class="table table-bordered" style="position: absolute;">
+                <thead>
+                <tr style="color: aquamarine; font-size: 18px; background: azure">
+                    <th contenteditable="true">原始数据</th>
+                    <th contenteditable="true">拟合数据</th>
+                </tr>
+                </thead>
+            <tbody>
+            {% for value in reaction.branch_data_dict[important_branch] %}
+            <tr style="color: aliceblue; font-size: 22px">
+                <td contenteditable="true">{{ value }}</td>
+                <td contenteditable="true">{{ value }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+            </table>
         {% endfor %}
     {% endfor %}
 </body>
