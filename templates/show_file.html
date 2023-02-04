@@ -47,10 +47,12 @@
     {% endfor %}
     {% for reaction in reaction_list %}
         {% for important_branch in reaction.important_branch_list %}
-             <div id="{{ reaction.reactant_title }} {{ important_branch }}" style="width: 600px;height:400px;background: beige;margin: 0 auto"></div>
-                <script type="text/javascript">
+            <div style="width: auto;height: 600px;background: #D4F1F4">
+             <div id="{{ reaction.reactant_title }} {{ important_branch }}" style="width: 600px;height:400px;background: beige;position: absolute;left: 300px; float: left; margin-top: 75px "></div>
+                <script type="text/javascript">{
                   // 基于准备好的dom，初始化echarts实例
-                  var myChart = echarts.init(document.getElementById('{{ reaction.reactant_title }} {{ important_branch }}'));
+                  var myChart = echarts.init(document.getElementById('{{ reaction.reactant_title }} {{ important_branch }}'))
+                  }
 
                   // 指定图表的配置项和数据
                   var option = {
@@ -64,7 +66,9 @@
                     xAxis: {
                       data: {{ reaction.temperature }}
                     },
-                    yAxis: {},
+                    yAxis: {
+                        type: 'value'
+                    },
                     series: [
                       {
                         name: '反应',
@@ -74,27 +78,58 @@
                       }
                     ]
                   };
-
+                  console.log(option)
                   // 使用刚指定的配置项和数据显示图表。
                   myChart.setOption(option);
                 </script>
-            <button id="btn_tx_1" onclick="btn_tx_r()" class="btn btn-primary" style="position: absolute; margin-left: 70%;margin-top: 6%">绘制曲线</button>
-            <table class="table table-bordered" style="position: absolute;">
+
+            <table id='{{ reaction.reactant_title }} {{ important_branch }} table'; class="table table-bordered" style="float:left; height: 400px; position: absolute; left: 1000px; margin-top: 75px">
                 <thead>
-                <tr style="color: aquamarine; font-size: 18px; background: azure">
+                <tr style="font-size: 18px; background: #189AB4">
                     <th contenteditable="true">原始数据</th>
                     <th contenteditable="true">拟合数据</th>
                 </tr>
                 </thead>
             <tbody>
             {% for value in reaction.branch_data_dict[important_branch] %}
-            <tr style="color: aliceblue; font-size: 22px">
-                <td contenteditable="true">{{ value }}</td>
-                <td contenteditable="true">{{ value }}</td>
+            <tr  style="font-size: 22px">
+                <td contenteditable="true" style="background: #7EC8E3">{{ value }}</td>
+                <td contenteditable="true" style="background: #7EC8E3">{{ value }}</td>
             </tr>
             {% endfor %}
             </tbody>
             </table>
+            <script>
+            function btn_tx_r(id) {
+                console.log(id)
+                var myChart = echarts.init(document.getElementById(id))
+                var table = document.getElementById(id+' table')
+                var td_list = table.getElementsByTagName('td')
+                var array = [];
+                for(var i=0; i<td_list.length;i=i+2)
+                {
+                    array.push(parseFloat(td_list[i].innerHTML))
+                }
+
+                console.log(array)
+                // 指定图表的配置项和数据
+                var option = {
+                     series: [
+                      {
+
+                        data: array
+                      }
+                    ]
+                };
+                console.log(option)
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            }
+        </script>
+            <button id="btn_tx_1" onclick="btn_tx_r('{{ reaction.reactant_title }} {{ important_branch }}')" class="btn btn-primary" style="float: left; width:200px; height:75px; position: absolute; left: 1700px; margin-top: 300px">绘制曲线</button>
+        </div>
+        <h2> </h2>
+
         {% endfor %}
     {% endfor %}
 </body>
@@ -104,6 +139,7 @@
         var file = objFile.files[0]
 
     }
+
 
 </script>
 </html>
