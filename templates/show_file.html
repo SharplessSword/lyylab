@@ -5,29 +5,33 @@
     <title>lyy 的实验室</title>
     <link rel="stylesheet" href='../static/base.css'>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <h1>lyy's lab </h1>
-    <ol>This is the guide book of the lyylab
-        <li>click the button</li>
-        <li>upload .out file, the webpage show something</li>
-        <li>select the item you want to curve fit</li>
-    </ol>
     <form method="POST" action="" enctype="multipart/form-data">
-      <p><input type="file" name="file"></p>
+      <input type="file" name="file" id="upload_file" style="display: none">
+        <div style="text-align: center"><button  class="color" style="width: 620px;height: 80px;border-style: none;font-size: 30px">click here, upload your .out file</button></div>
       <p><input type="submit" value="Submit"></p>
     </form>
+    <style>
+
+</style>
+
     {% for reaction in reaction_list %}
         <h2 style="text-align: center">{{ reaction.reactant_title }} 's</h2>
-        <table>
+        <div style="overflow-x: scroll; ">
+        <table style="border-collapse: collapse;">
+            <thead>
             <tr>
-                <td>T(K)</td>
+            <th>T(K)</th>
                 {% for name in reaction.column_name %}
-                    <td>{{ name }}</td>
-                    <td>分支比</td>
+                    <th style="height: 30px">{{ name }}</th>
+                    <th style="width: 100px">分支比</th>
                 {% endfor %}
-                <td>Loss</td>
+                <th style="height: 30px">Loss</th>
             </tr>
+            </thead>
             {% for i in range(reaction.temperature|length) %}
                 <tr>
                     <td>{{ reaction.temperature[i] }}</td>
@@ -44,6 +48,7 @@
                 </tr>
             {% endfor %}
         </table>
+        </div>>
     {% endfor %}
     {% for reaction in reaction_list %}
         {% for important_branch in reaction.important_branch_list %}
@@ -52,16 +57,19 @@
                 <script type="text/javascript">{
                   // 基于准备好的dom，初始化echarts实例
                   var myChart = echarts.init(document.getElementById('{{ reaction.reactant_title }} {{ important_branch }}'))
-                  }
-
                   // 指定图表的配置项和数据
                   var option = {
                     title: {
                       text: '{{ reaction.reactant_title }} {{ important_branch }}'
                     },
-                    tooltip: {},
+                    tooltip: {trigger:'axis'},
                     legend: {
                       data: ['比例']
+                    },
+                    toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                        }
                     },
                     xAxis: {
                       data: {{ reaction.temperature }}
@@ -75,12 +83,21 @@
                         type: 'line',
                         data: {{ reaction.branch_data_dict[important_branch] }},
                         smooth:true,
+                        stack: 'x',
+                      },
+                      {
+                        name: '拟合',
+                        type: 'line',
+                        data: [0,0,0,0,0,0,0,0],
+                        smooth:true,
+                        stack: 'x',
                       }
+
                     ]
                   };
-                  console.log(option)
                   // 使用刚指定的配置项和数据显示图表。
                   myChart.setOption(option);
+                }
                 </script>
 
             <table id='{{ reaction.reactant_title }} {{ important_branch }} table'; class="table table-bordered" style="float:left; height: 400px; position: absolute; left: 1000px; margin-top: 75px">
@@ -100,34 +117,51 @@
             </tbody>
             </table>
             <script>
-            function btn_tx_r(id) {
-                console.log(id)
-                var myChart = echarts.init(document.getElementById(id))
-                var table = document.getElementById(id+' table')
-                var td_list = table.getElementsByTagName('td')
+            function btn_tx_r(id, temperature) {
+                var myChart = echarts.init(document.getElementById(id));
+                var table = document.getElementById(id+' table');
+                var td_list = table.getElementsByTagName('td');
                 var array = [];
                 for(var i=0; i<td_list.length;i=i+2)
                 {
                     array.push(parseFloat(td_list[i].innerHTML))
                 }
+                var data = {
+                    data: JSON.stringify({
+                    'xdata': temperature,
+                    'ydata': array
+                    }),
+                 }
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "/update",//后端请求
+                    data: data,
+                    success: function (result) {
 
-                console.log(array)
-                // 指定图表的配置项和数据
-                var option = {
-                     series: [
-                      {
+                    for(var i=0; i<td_list.length/2;i=i+1)
+                    {
+                        td_list[i*2+1].innerHTML = result['fit_ydata'][i]
+                    }
+                    var option = myChart.getOption()
+                    option['series'][0]['data'] = array
+                    option['series'][1]['data'] = result['fit_ydata']
+                    // 指定图表的配置项和数据
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
 
-                        data: array
-                      }
-                    ]
-                };
-                console.log(option)
-                // 使用刚指定的配置项和数据显示图表。
-                myChart.setOption(option);
+                    },
+                    error: function (result) {
+                    }
+                    })
+
             }
         </script>
-            <button id="btn_tx_1" onclick="btn_tx_r('{{ reaction.reactant_title }} {{ important_branch }}')" class="btn btn-primary" style="float: left; width:200px; height:75px; position: absolute; left: 1700px; margin-top: 300px">绘制曲线</button>
-        </div>
+            <div>
+
+            <button id="btn_tx_1" onclick="btn_tx_r('{{ reaction.reactant_title }} {{ important_branch }}', {{ reaction.temperature }})" class="btn btn-primary" style="float: left; width:200px; height:75px; position: absolute; left: 1700px; margin-top: 300px">绘制曲线</button>
+
+            </div>
         <h2> </h2>
 
         {% endfor %}

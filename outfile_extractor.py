@@ -92,6 +92,3 @@ def get_reaction(content):
     reaction_list = [extract_class(reaction) for reaction in data]
     return reaction_list
 
-with open('0.01atm-1C5-.out', 'r') as f:
-    content = f.read()
-    get_reaction(content)

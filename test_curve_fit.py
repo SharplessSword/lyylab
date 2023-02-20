@@ -1,5 +1,8 @@
+import math
+
 from numpy import log
 from scipy.optimize import curve_fit
+
 
 def f_model(x, A, n, E):
     # print(x, A, n, E)
@@ -11,4 +14,13 @@ def fitnlm(xdata, ydata, f_model):
     popt, pcov = curve_fit(f=f_model, xdata=xdata, ydata=ydata, maxfev = 8000)
     return popt
 
-# xdata = [250, 298, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000]
+def get_curve_value(xdata, ydata):
+    try:
+        ln_ydata = [math.log(y) for y in ydata]
+        data = fitnlm(xdata, ln_ydata, f_model)
+        fit_y = [math.e**f_model(x,*data)for x in xdata]
+        fit_y = [round(number, 4) for number in fit_y]
+    except:
+        # when can not fit the curve
+        fit_y = [0 for i in range(len(ydata))]
+    return fit_y
