@@ -3,7 +3,10 @@ import json
 from flask import Flask, render_template, request, redirect, url_for
 from outfile_extractor import get_reaction
 from test_curve_fit import get_curve_value
+from datetime import timedelta
 app = Flask(__name__)
+# app.config['DEBUG'] = True
+# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = timedelta(seconds=1)
 
 @app.route('/')
 def hello_world():
@@ -14,6 +17,7 @@ def hello_world():
 def upload_file():
     uploaded_file = request.files['file']
     content = uploaded_file.stream.read().decode('utf-8')
+    print(len(content))
     return render_template('show_file.html', reaction_list=get_reaction(content))
 
 

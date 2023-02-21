@@ -3,26 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>lyy 的实验室</title>
-    <link rel="stylesheet" href='../static/base.css'>
+    <link rel="stylesheet" href={{ url_for('static', filename='base.css')}}>
 </head>
 <body>
-    <ol>This is the guide book of the lyylab
-        <li>click the button</li>
-        <li>upload .out file, the webpage show something</li>
-        <li>select the item you want to curve fit</li>
-    </ol>
-    <form method="POST" action="" enctype="multipart/form-data">
-      <p><input type="file" name="file"></p>
-      <p><input type="submit" value="Submit"></p>
-    </form>
+    <div class="div-h1">
+    <h1>lyy's lab </h1>
+    <h2>Make your research easier and happier</h2>
+        <form method="POST" action="" enctype="multipart/form-data" style="margin-top: 200px">
+          <input type="file" class="input_file" name="file" id="upload_file">
+          <input type="submit" value="Submit" class="submit">
+        </form>
+    </div>
 
 </body>
 <script>
-    function get_upload_file(){
-        var objFile = document.getElementById('outfile')
-        var file = objFile.files[0]
-        
+    function getFile(){
+    console.log(4656)
     }
+    function change(){
+        console.log(3566)
+        let file=document.getElementById('upload_file')
+        console.log(file,24455)
 
-</script>>
+    }
+</script>
 </html>

@@ -1,18 +1,58 @@
-h1{
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.header{
+    background: #189AB4;
+    border: 2px solid black;
+}
+.div-h1{
+    margin: 0 0;
+    background-color: #AEE0E6;
     text-align: center;
-    height: 100px;
+    height: 100vh;
     font-size: 60px;
+}
+.input_file{
+    border-style: none;
+    font-size: 30px;
+    width: 620px;
+    height: 80px;
+}
+.submit{
+    border-style: none;
+    font-size: 30px;
+    width: 200px;
+    height: 40px;
+}
+
+h1{
+    padding: 200px 100px 0 100px;
+    text-align: center;
+    color: white;
+    top: 50px;
+    font-size: 100px;
+    font-family: "Deja Vu Sans Mono";
+
+}
+h2{
+    top: 20px;
+    color: white;
+    font-size: 36px;
+    font-family: "Times New Roman";
+    font-style:oblique
 }
 ol{
     text-align: center;
     font-weight: bold;
     list-style-position: inside;
 }
-
 table{
     alignment: center;
 
 }
+
 td{
     min-width: 100px;
     border: 1px solid black;
@@ -20,11 +60,8 @@ td{
 
 .important_reaction{
     width: 200px;
-    background: aqua;
+    background: #7EC8E3
 }
-
-
 .color:hover{
     background-color:#DBEAFE;
 }
-

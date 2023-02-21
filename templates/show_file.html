@@ -3,33 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>lyy 的实验室</title>
-    <link rel="stylesheet" href='../static/base.css'>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='base.css') }}/>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-    <h1>lyy's lab </h1>
-    <form method="POST" action="" enctype="multipart/form-data">
-      <input type="file" name="file" id="upload_file" style="display: none">
-        <div style="text-align: center"><button  class="color" style="width: 620px;height: 80px;border-style: none;font-size: 30px">click here, upload your .out file</button></div>
-      <p><input type="submit" value="Submit"></p>
-    </form>
-    <style>
-
-</style>
-
+<div>
     {% for reaction in reaction_list %}
-        <h2 style="text-align: center">{{ reaction.reactant_title }} 's</h2>
+        <h2 style="text-align: center;color:black">{{ reaction.reactant_title }} 's</h2>
         <div style="overflow-x: scroll; ">
         <table style="border-collapse: collapse;">
             <thead>
-            <tr>
-            <th>T(K)</th>
+            <tr class="header">
+                <th style="background: #189AB4">T(K)</th>
                 {% for name in reaction.column_name %}
-                    <th style="height: 30px">{{ name }}</th>
-                    <th style="width: 100px">分支比</th>
+                    <th>{{ name }}</th>
+                    <th>分支比</th>
                 {% endfor %}
-                <th style="height: 30px">Loss</th>
+                <th>Loss</th>
             </tr>
             </thead>
             {% for i in range(reaction.temperature|length) %}
@@ -48,12 +39,12 @@
                 </tr>
             {% endfor %}
         </table>
-        </div>>
+        </div>
     {% endfor %}
     {% for reaction in reaction_list %}
         {% for important_branch in reaction.important_branch_list %}
-            <div style="width: auto;height: 600px;background: #D4F1F4">
-             <div id="{{ reaction.reactant_title }} {{ important_branch }}" style="width: 600px;height:400px;background: beige;position: absolute;left: 300px; float: left; margin-top: 75px "></div>
+             <div class="each-reaction-container" style="display: flex;">
+             <div id="{{ reaction.reactant_title }} {{ important_branch }}" style="width: 600px;height:400px;"></div>
                 <script type="text/javascript">{
                   // 基于准备好的dom，初始化echarts实例
                   var myChart = echarts.init(document.getElementById('{{ reaction.reactant_title }} {{ important_branch }}'))
@@ -99,12 +90,11 @@
                   myChart.setOption(option);
                 }
                 </script>
-
-            <table id='{{ reaction.reactant_title }} {{ important_branch }} table'; class="table table-bordered" style="float:left; height: 400px; position: absolute; left: 1000px; margin-top: 75px">
+            <table id='{{ reaction.reactant_title }} {{ important_branch }} table' class="table table-bordered">
                 <thead>
                 <tr style="font-size: 18px; background: #189AB4">
-                    <th contenteditable="true">原始数据</th>
-                    <th contenteditable="true">拟合数据</th>
+                    <th>原始数据</th>
+                    <th>拟合数据</th>
                 </tr>
                 </thead>
             <tbody>
@@ -116,8 +106,28 @@
             {% endfor %}
             </tbody>
             </table>
-            <script>
-            function btn_tx_r(id, temperature) {
+            <table class="ane">
+                <thead>
+                <tr>
+                    <th>A</th>
+                    <th>n</th>
+                    <th>E</th>
+                </tr>
+                </thead>
+                <tr>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                </tr>
+            </table>
+            <button id="btn_tx_1" onclick="btn_tx_r('{{ reaction.reactant_title }} {{ important_branch }}', {{ reaction.temperature }})" class="btn btn-primary" style="float: left; width:200px; height:75px; position: absolute; left: 1700px; margin-top: 300px">绘制曲线</button>
+             </div>
+        {% endfor %}
+    {% endfor %}
+
+</body>
+<script>
+    function btn_tx_r(id, temperature) {
                 var myChart = echarts.init(document.getElementById(id));
                 var table = document.getElementById(id+' table');
                 var td_list = table.getElementsByTagName('td');
@@ -156,24 +166,15 @@
                     })
 
             }
-        </script>
-            <div>
-
-            <button id="btn_tx_1" onclick="btn_tx_r('{{ reaction.reactant_title }} {{ important_branch }}', {{ reaction.temperature }})" class="btn btn-primary" style="float: left; width:200px; height:75px; position: absolute; left: 1700px; margin-top: 300px">绘制曲线</button>
-
-            </div>
-        <h2> </h2>
-
-        {% endfor %}
-    {% endfor %}
-</body>
-<script>
     function get_upload_file(){
         var objFile = document.getElementById('outfile')
         var file = objFile.files[0]
 
     }
+    function getFile(){
+        document.getElementById('upload_file').click()
 
+    }
 
 </script>
 </html>
