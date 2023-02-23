@@ -16,6 +16,7 @@ def fitnlm(xdata, ydata, f_model):
 
 
 def get_curve_value(xdata, ydata):
+    print(xdata, ydata)
     try:
         fit_part_xdata = []
         fit_part_ydata = []
@@ -33,14 +34,16 @@ def get_curve_value(xdata, ydata):
         complete_fit_ydata = ['' for i in range(len(ydata))]
         for i in range(len(fit_part_index)):
             complete_fit_ydata[fit_part_index[i]] = fit_y[i]
-        for i in range(len(complete_fit_ydata)):
-            if complete_fit_ydata[i] == '':
-                xdata[i] = ''
+        for i in range(len(xdata)):
+            if ydata[i] == -1:
+                ydata[i] = ''
+
     except:
         # when can not fit the curve
-        fit_y = [0 for i in range(len(ydata))]
+        complete_fit_ydata = [0 for i in range(len(ydata))]
         A, n, E = 0, 0, 0
-    return xdata, fit_y, A, n, E
+    print(ydata, complete_fit_ydata)
+    return ydata, complete_fit_ydata, A, n, E
 
 
 def beautify_number(number):

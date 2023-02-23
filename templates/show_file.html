@@ -72,6 +72,7 @@
                       {
                         name: '反应',
                         type: 'line',
+                        connectNulls:true,
                         data: {{ reaction.branch_data_dict[important_branch] }},
                         smooth:true,
                         stack: 'x',
@@ -79,6 +80,7 @@
                       {
                         name: '拟合',
                         type: 'line',
+                        connectNulls:true,
                         data: [0,0,0,0,0,0,0,0],
                         smooth:true,
                       }
@@ -92,15 +94,17 @@
             <table id='{{ reaction.reactant_title }} {{ important_branch }} table' class="table" style="margin-left: 100px">
                 <thead>
                 <tr style="font-size: 18px; background: #189AB4">
+                    <th>T(K)</th>
                     <th>原始数据</th>
                     <th>拟合数据</th>
                 </tr>
                 </thead>
             <tbody>
-            {% for value in reaction.branch_data_dict[important_branch] %}
+            {% for i in range(reaction.branch_data_dict[important_branch]|length) %}
             <tr  style="font-size: 22px">
-                <td contenteditable="true" style="background: #7EC8E3">{{ value }}</td>
-                <td contenteditable="true" style="background: #7EC8E3">{{ value }}</td>
+                <td style="background: #7EC8E3">{{ reaction.temperature[i] }}</td>
+                <td contenteditable="true" style="background: #7EC8E3">{{ reaction.branch_data_dict[important_branch][i] }}</td>
+                <td contenteditable="true" style="background: #7EC8E3">0</td>
             </tr>
             {% endfor %}
             </tbody>
@@ -115,9 +119,9 @@
                 </tr>
                 </thead>
                 <tr style="font-size: 18px; background: #7EC8E3">
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
                 </tr>
             </table>
             <button id="btn_tx_1" onclick="btn_tx_r('{{ reaction.reactant_title }} {{ important_branch }}', {{ reaction.temperature }})" class="btn btn-primary" style="width:200px; height:75px;margin-top: 50px">绘制曲线</button>
@@ -131,13 +135,15 @@
     function btn_tx_r(id, temperature) {
                 var myChart = echarts.init(document.getElementById(id));
                 var table = document.getElementById(id+' table');
-                var td_list = table.getElementsByTagName('td');
+                var tr_list = table.getElementsByTagName('tr');
                 var ane_table = document.getElementById(id+' table2')
                 var ane_table_td = ane_table.getElementsByTagName('td')
                 var array = [];
-                for(var i=0; i<td_list.length;i=i+2)
+                for(var i=1; i<tr_list.length;i=i+1)
                 {
-                    array.push(parseFloat(td_list[i].innerHTML))
+                    console.log(tr_list[i])
+                    td_list = tr_list[i].getElementsByTagName('td')
+                    array.push(parseFloat(td_list[1].innerHTML))
                 }
                 var data = {
                     data: JSON.stringify({
@@ -152,20 +158,17 @@
                     data: data,
                     success: function (result) {
 
-                    for(var i=0; i<td_list.length/2;i=i+1)
+                    for(var i=1; i<tr_list.length;i=i+1)
                     {
-                        td_list[i*2+1].innerHTML = result['fit_ydata'][i]
+                        td_list = tr_list[i].getElementsByTagName('td')
+                        td_list[1].innerHTML = result['ydata'][i-1]
+                        td_list[2].innerHTML = result['fit_ydata'][i-1]
                     }
-                    for(var i=0; i<td_list.length/2;i=i+1)
-                    {
-                        td_list[i*2+1].innerHTML = result['fit_ydata'][i]
-                    }
-                    console.log(result)
                     ane_table_td[0].innerHTML=result['a']
                     ane_table_td[1].innerHTML=result['n']
                     ane_table_td[2].innerHTML=result['e']
                     var option = myChart.getOption()
-                    option['series'][0]['data'] = array
+                    option['series'][0]['data'] = result['ydata']
                     option['series'][1]['data'] = result['fit_ydata']
 
                     // 指定图表的配置项和数据
