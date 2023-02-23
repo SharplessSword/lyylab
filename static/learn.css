@@ -6,11 +6,16 @@
 .sidebar {
   height: 300px;
   background-color: #F09A9D;    /* Red */
+  float: left;
+  width: 300px;
+  margin-left: 300px;
 }
 
 .content {
+  float: left;
   height: 500px;
   background-color: #F5CF8E;    /* Yellow */
+  margin-left: 100px;
 }
 
 .footer {

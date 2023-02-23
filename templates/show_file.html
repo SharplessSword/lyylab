@@ -43,8 +43,8 @@
     {% endfor %}
     {% for reaction in reaction_list %}
         {% for important_branch in reaction.important_branch_list %}
-             <div class="each-reaction-container" style="display: flex;">
-             <div id="{{ reaction.reactant_title }} {{ important_branch }}" style="width: 600px;height:400px;"></div>
+             <div class="each-reaction-container" style="display: flex;justify-content: center;border-bottom: 1px solid #4169E1;">
+             <div id="{{ reaction.reactant_title }} {{ important_branch }}" style="width: 800px;height:600px;"></div>
                 <script type="text/javascript">{
                   // 基于准备好的dom，初始化echarts实例
                   var myChart = echarts.init(document.getElementById('{{ reaction.reactant_title }} {{ important_branch }}'))
@@ -81,7 +81,6 @@
                         type: 'line',
                         data: [0,0,0,0,0,0,0,0],
                         smooth:true,
-                        stack: 'x',
                       }
 
                     ]
@@ -90,7 +89,7 @@
                   myChart.setOption(option);
                 }
                 </script>
-            <table id='{{ reaction.reactant_title }} {{ important_branch }} table' class="table table-bordered">
+            <table id='{{ reaction.reactant_title }} {{ important_branch }} table' class="table" style="margin-left: 100px">
                 <thead>
                 <tr style="font-size: 18px; background: #189AB4">
                     <th>原始数据</th>
@@ -106,22 +105,24 @@
             {% endfor %}
             </tbody>
             </table>
-            <table class="ane">
+            <div class="ane_and_button" style="flex-direction: column;display:flex;justify-content: flex-start;margin-left: 100px">
+            <table class="ane" id="{{ reaction.reactant_title }} {{ important_branch }} table2">
                 <thead>
-                <tr>
+                <tr style="font-size: 18px; background: #189AB4">
                     <th>A</th>
                     <th>n</th>
                     <th>E</th>
                 </tr>
                 </thead>
-                <tr>
+                <tr style="font-size: 18px; background: #7EC8E3">
                     <td>1</td>
                     <td>2</td>
                     <td>3</td>
                 </tr>
             </table>
-            <button id="btn_tx_1" onclick="btn_tx_r('{{ reaction.reactant_title }} {{ important_branch }}', {{ reaction.temperature }})" class="btn btn-primary" style="float: left; width:200px; height:75px; position: absolute; left: 1700px; margin-top: 300px">绘制曲线</button>
-             </div>
+            <button id="btn_tx_1" onclick="btn_tx_r('{{ reaction.reactant_title }} {{ important_branch }}', {{ reaction.temperature }})" class="btn btn-primary" style="width:200px; height:75px;margin-top: 50px">绘制曲线</button>
+            </div>
+            </div>
         {% endfor %}
     {% endfor %}
 
@@ -131,6 +132,8 @@
                 var myChart = echarts.init(document.getElementById(id));
                 var table = document.getElementById(id+' table');
                 var td_list = table.getElementsByTagName('td');
+                var ane_table = document.getElementById(id+' table2')
+                var ane_table_td = ane_table.getElementsByTagName('td')
                 var array = [];
                 for(var i=0; i<td_list.length;i=i+2)
                 {
@@ -153,9 +156,18 @@
                     {
                         td_list[i*2+1].innerHTML = result['fit_ydata'][i]
                     }
+                    for(var i=0; i<td_list.length/2;i=i+1)
+                    {
+                        td_list[i*2+1].innerHTML = result['fit_ydata'][i]
+                    }
+                    console.log(result)
+                    ane_table_td[0].innerHTML=result['a']
+                    ane_table_td[1].innerHTML=result['n']
+                    ane_table_td[2].innerHTML=result['e']
                     var option = myChart.getOption()
                     option['series'][0]['data'] = array
                     option['series'][1]['data'] = result['fit_ydata']
+
                     // 指定图表的配置项和数据
                     // 使用刚指定的配置项和数据显示图表。
                     myChart.setOption(option);
