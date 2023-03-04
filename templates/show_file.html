@@ -62,11 +62,59 @@
                         saveAsImage: {}
                         }
                     },
+                      dataZoom:{
+                        type:'inside',
+                    },
                     xAxis: {
                       data: {{ reaction.temperature }}
                     },
                     yAxis: {
-                        type: 'value'
+                        type: 'log',
+                        axisLabel: {
+                                        formatter: function (value) {
+                                            var res = value.toString();
+                                            var numN1 = 0;
+                                            var numN2 = 1;
+                                            var num1=0;
+                                            var num2=0;
+                                            var t1 = 1;
+                                            for(var k=0;k<res.length;k++){
+                                                if(res[k]==".")
+                                                   t1 = 0;
+                                                if(t1)
+                                                   num1++;
+                                                else
+                                                   num2++;
+                                            }
+
+                                            if(Math.abs(value)<1 && res.length>1)
+                                            {
+                                                for(var i=2; i<res.length; i++){
+                                                    if(res[i]=="0"){
+                                                        numN2++;
+                                                    }else if(res[i]==".")
+                                                        continue;
+                                                    else
+                                                        break;
+                                                }
+                                                var v = parseFloat(value);
+                                                v = v * Math.pow(10,numN2);
+                                                return v.toString() + "e-" + numN2;
+                                            }else if(num1>1)
+                                            {
+                                                if(res[0]=="-")
+                                                    numN1 = num1 - 2;
+                                                else
+                                                    numN1 = num1 - 1;
+                                                var v = parseFloat(value);
+                                                v = v / Math.pow(10,numN1);
+                                                if(num2 > 4)
+                                                    v = v.toFixed(4);
+                                                return v.toString() + "e" + numN1;
+                                            }else
+                                                return parseFloat(value);
+                                        },
+                                    },
                     },
                     series: [
                       {
@@ -75,20 +123,21 @@
                         connectNulls:true,
                         data: {{ reaction.branch_data_dict[important_branch] }},
                         smooth:true,
-                        stack: 'x',
                       },
                       {
-                        name: '拟合',
-                        type: 'line',
-                        connectNulls:true,
-                        data: [0,0,0,0,0,0,0,0],
-                        smooth:true,
-                      }
+                    name: '拟合',
+                    type: 'line',
+                    connectNulls:true,
+                    data:[],
+                    smooth:true,
+                  }
 
                     ]
                   };
                   // 使用刚指定的配置项和数据显示图表。
+                  console.log({{ reaction.branch_data_dict[important_branch] }})
                   myChart.setOption(option);
+                  console.log(myChart)
                 }
                 </script>
             <table id='{{ reaction.reactant_title }} {{ important_branch }} table' class="table" style="margin-left: 100px">
