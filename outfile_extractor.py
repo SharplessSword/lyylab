@@ -79,7 +79,7 @@ def get_important_branch(branch_ratio_dict):
     important_branch_list = []
     for key, value_list in branch_ratio_dict.items():
         for value in value_list:
-            if value > 0.1:
+            if value >= 0.05:
                 important_branch_list.append(key)
                 break
 
