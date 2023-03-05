@@ -135,9 +135,8 @@
                     ]
                   };
                   // 使用刚指定的配置项和数据显示图表。
-                  console.log({{ reaction.branch_data_dict[important_branch] }})
+
                   myChart.setOption(option);
-                  console.log(myChart)
                 }
                 </script>
             <table id='{{ reaction.reactant_title }} {{ important_branch }} table' class="table" style="margin-left: 100px">
@@ -151,7 +150,7 @@
             <tbody>
             {% for i in range(reaction.branch_data_dict[important_branch]|length) %}
             <tr  style="font-size: 22px">
-                <td style="background: #7EC8E3">{{ reaction.temperature[i] }}</td>
+                <td contenteditable="true" style="background: #7EC8E3">{{ reaction.temperature[i] }}</td>
                 <td contenteditable="true" style="background: #7EC8E3">{{ reaction.branch_data_dict[important_branch][i] }}</td>
                 <td contenteditable="true" style="background: #7EC8E3">0</td>
             </tr>
@@ -188,14 +187,20 @@
                 var ane_table = document.getElementById(id+' table2')
                 var ane_table_td = ane_table.getElementsByTagName('td')
                 var array = [];
+                var selected_temperature= []
                 for(var i=1; i<tr_list.length;i=i+1)
                 {
-                    console.log(tr_list[i])
                     td_list = tr_list[i].getElementsByTagName('td')
                     array.push(parseFloat(td_list[1].innerHTML))
                 }
+                for(var i=1; i<tr_list.length;i=i+1)
+                {
+                    td_list = tr_list[i].getElementsByTagName('td')
+                    selected_temperature.push(parseFloat(td_list[0].innerHTML))
+                }
                 var data = {
                     data: JSON.stringify({
+                    'selected_temperature':selected_temperature,
                     'xdata': temperature,
                     'ydata': array
                     }),
@@ -210,7 +215,7 @@
                     for(var i=1; i<tr_list.length;i=i+1)
                     {
                         td_list = tr_list[i].getElementsByTagName('td')
-                        td_list[1].innerHTML = result['ydata'][i-1]
+                        td_list[0].innerHTML = temperature[i-1]
                         td_list[2].innerHTML = result['fit_ydata'][i-1]
                     }
                     ane_table_td[0].innerHTML=result['a']

@@ -1,10 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>测试echarts生成大量数据</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
 </head>
 <body>
-$END$
+<div id='1' style="width: 1000px;height: 800px"></div>
+    <script type="text/javascript">{
+          // 基于准备好的dom，初始化echarts实例
+          var myChart = echarts.init(document.getElementById('1'))
+          console.log({{ xdata }})
+          console.log({{ ydata }})
+          // 指定图表的配置项和数据
+          var option = {
+            legend: {
+              data: ['比例']
+            },
+            tooltip:{
+                show:true,
+                trigger:'axis',
+            },
+            dataZoom:{
+                type:'inside'
+            },
+            toolbox: {
+            },
+            xAxis: {
+              data: {{ xdata }}
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+              {
+                name: '反应',
+                type: 'line',
+                connectNulls:true,
+                data: {{ ydata }},
+                smooth:true,
+                stack: 'x',
+              },
+
+            ]
+          };
+          // 使用刚指定的配置项和数据显示图表。
+          myChart.setOption(option);
+        }
+        </script>
+
+
 </body>
 </html>

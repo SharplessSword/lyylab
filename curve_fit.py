@@ -15,35 +15,24 @@ def fitnlm(xdata, ydata, f_model):
     return popt
 
 
-def get_curve_value(xdata, ydata):
-    print(xdata, ydata)
+def get_curve_value(xdata, ydata, select_xdata):
     try:
         fit_part_xdata = []
         fit_part_ydata = []
-        fit_part_index = []
-        for i in range(len(ydata)):
-            if ydata[i] != -1:
+        for i in range(len(select_xdata)):
+            if select_xdata[i] != -1:
                 fit_part_xdata.append(xdata[i])
                 fit_part_ydata.append(ydata[i])
-                fit_part_index.append(i)
         ln_ydata = [math.log(y) for y in fit_part_ydata]
         data = fitnlm(fit_part_xdata, ln_ydata, f_model)
         A, n, E = [beautify_number(i) for i in data]
-        fit_y = [math.e ** f_model(x, *data) for x in fit_part_xdata]
+        fit_y = [math.e ** f_model(x, *data) for x in xdata]
         fit_y = [beautify_number(number) for number in fit_y]
-        complete_fit_ydata = ['' for i in range(len(ydata))]
-        for i in range(len(fit_part_index)):
-            complete_fit_ydata[fit_part_index[i]] = fit_y[i]
-        for i in range(len(xdata)):
-            if ydata[i] == -1:
-                ydata[i] = ''
-
     except:
         # when can not fit the curve
-        complete_fit_ydata = [0 for i in range(len(ydata))]
+        fit_y = [0 for i in range(len(ydata))]
         A, n, E = 0, 0, 0
-    print(ydata, complete_fit_ydata)
-    return ydata, complete_fit_ydata, A, n, E
+    return fit_y, A, n, E
 
 
 def beautify_number(number):
