@@ -142,6 +142,7 @@
             <table id='{{ reaction.reactant_title }} {{ important_branch }} table' class="table" style="margin-left: 100px">
                 <thead>
                 <tr style="font-size: 18px; background: #189AB4">
+                    <th style="background: white"></th>
                     <th>T(K)</th>
                     <th>原始数据</th>
                     <th>拟合数据</th>
@@ -150,6 +151,11 @@
             <tbody>
             {% for i in range(reaction.branch_data_dict[important_branch]|length) %}
             <tr  style="font-size: 22px">
+                <td style="border: none">
+                    <div class="" data-status=1 onclick="change_status(this)"  style="width: 22px;height: 22px;border-radius: 50%;border: 2px solid #99D9EA;float: right;margin-right: 10px">
+                        <div style="width: 14px;height: 14px;margin:2px 2px;border-radius: 50%;border:1px solid #0080FF;background: #0080FF"></div>
+                    </div>
+                </td>
                 <td contenteditable="true" style="background: #7EC8E3">{{ reaction.temperature[i] }}</td>
                 <td contenteditable="true" style="background: #7EC8E3">{{ reaction.branch_data_dict[important_branch][i] }}</td>
                 <td contenteditable="true" style="background: #7EC8E3">0</td>
@@ -191,12 +197,13 @@
                 for(var i=1; i<tr_list.length;i=i+1)
                 {
                     td_list = tr_list[i].getElementsByTagName('td')
-                    array.push(parseFloat(td_list[1].innerHTML))
+                    array.push(parseFloat(td_list[2].innerHTML))
                 }
                 for(var i=1; i<tr_list.length;i=i+1)
                 {
                     td_list = tr_list[i].getElementsByTagName('td')
-                    selected_temperature.push(parseFloat(td_list[0].innerHTML))
+
+                    selected_temperature.push(td_list[0].getElementsByTagName('div')[0].dataset['status'])
                 }
                 var data = {
                     data: JSON.stringify({
@@ -205,6 +212,7 @@
                     'ydata': array
                     }),
                  }
+                console.log(data)
                 $.ajax({
                     type: "POST",
                     dataType: "json",
@@ -215,8 +223,7 @@
                     for(var i=1; i<tr_list.length;i=i+1)
                     {
                         td_list = tr_list[i].getElementsByTagName('td')
-                        td_list[0].innerHTML = temperature[i-1]
-                        td_list[2].innerHTML = result['fit_ydata'][i-1]
+                        td_list[3].innerHTML = result['fit_ydata'][i-1]
                     }
                     ane_table_td[0].innerHTML=result['a']
                     ane_table_td[1].innerHTML=result['n']
@@ -244,6 +251,18 @@
         document.getElementById('upload_file').click()
 
     }
+    function change_status(div){
+        if(div.dataset['status'] == 1){
+            div.dataset['status'] = 0;
+            var div = div.getElementsByTagName('div')[0];
+            div.style['background'] = 'white'
+        }
+        else{
+            div.dataset['status'] = 1;
+            var div = div.getElementsByTagName('div')[0];
+            div.style['background'] = '#0080FF';
 
+        }
+    }
 </script>
 </html>

@@ -28,8 +28,9 @@ def upload_file():
 @app.route('/update', methods=['POST'])
 def update_curve_fit():
     data = json.loads(request.form.get('data'))
-    xdata, ydata, select_xdata = data['xdata'], data['ydata'], data['selected_temperature']
-    fit_ydata, a, n, e = get_curve_value(xdata, ydata, select_xdata)
+    print(data)
+    xdata, ydata, select_index = data['xdata'], data['ydata'], data['selected_temperature']
+    fit_ydata, a, n, e = get_curve_value(xdata, ydata, select_index)
 
     return {'ydata': ydata, 'fit_ydata': fit_ydata, 'a': a, 'n': n, 'e': e}
 

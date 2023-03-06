@@ -20,7 +20,7 @@ def get_curve_value(xdata, ydata, select_xdata):
         fit_part_xdata = []
         fit_part_ydata = []
         for i in range(len(select_xdata)):
-            if select_xdata[i] != -1:
+            if select_xdata[i] == '1':
                 fit_part_xdata.append(xdata[i])
                 fit_part_ydata.append(ydata[i])
         ln_ydata = [math.log(y) for y in fit_part_ydata]
